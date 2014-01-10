@@ -11,11 +11,22 @@
   }
 
   function widthFn( el ) {
-    return el.offsetWidth;
+    return el.clientWidth;
   }
 
   function heightFn( el ) {
-    return el.offsetHeight;
+    return el.clientHeight;
+  }
+
+  function paddingFn( el ) {
+    var computedStyle = window.getComputedStyle( el );
+
+    return {
+      top: parseFloat( computedStyle.paddingTop ),
+      left: parseFloat( computedStyle.paddingLeft ),
+      bottom: parseFloat( computedStyle.paddingBottom ),
+      right: parseFloat( computedStyle.paddingRight )
+    };
   }
 
   function logDimensions( el ) {
@@ -36,34 +47,42 @@
   console.log( tags );
 
   // Determine element visibility/style?
-  var temp = elements.filter(function( el ) {
+  elements = elements.filter(function( el ) {
     return el.offsetWidth && el.offsetHeight;
-  }).map( logDimensions )
-    .map(function( el ) {
-      // Grab all dimensions before we beigin conversion.
-      return {
-        el: el,
-        x: xFn( el ),
-        y: yFn( el ),
-        width: widthFn( el ),
-        height: heightFn( el )
-      };
-    })
-    .map(function( options ) {
+  }).map( logDimensions );
+
+  var temp = elements.map(function( el ) {
+    // Grab all dimensions before we beigin conversion.
+    return {
+      el: el,
+      x: xFn( el ),
+      y: yFn( el ),
+      width: widthFn( el ),
+      height: heightFn( el ),
+      padding: paddingFn( el )
+    };
+  });
+
+  setTimeout(function() {
+    temp.map(function( options ) {
       var el = options.el;
+      var padding = options.padding;
+
       var computedStyle = window.getComputedStyle( el );
       if ( computedStyle.position === 'static' ) {
         el.style.position = 'fixed';
         el.style.left = options.x + 'px';
         el.style.top = options.y + 'px';
-        el.style.width = options.width + 'px';
-        el.style.height = options.height + 'px';
+        el.style.width = ( options.width - padding.left - padding.right ) + 'px';
+        el.style.height = ( options.height - padding.top - padding.bottom ) + 'px';
       }
 
       return el;
     });
 
-  console.log( '-------------------' );
-  console.log( temp.map( logDimensions ) );
+    console.log( '-------------------' );
+    console.log( elements.map( logDimensions ) );
+  }, 2000 );
+
 
 }) ( window, document );
