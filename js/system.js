@@ -18,16 +18,31 @@
     return el.clientHeight;
   }
 
-  function paddingFn( el ) {
-    var computedStyle = window.getComputedStyle( el );
+  /**
+   * Determine dimensions of the box model edges:
+   *   margin, padding, border.
+   */
+  function boxModelEdgeFn( property ) {
+    var topEdge    = property + 'Top',
+        leftEdge   = property + 'Left',
+        bottomEdge = property + 'Bottom',
+        rightEdge  = property + 'Right';
 
-    return {
-      top: parseFloat( computedStyle.paddingTop ),
-      left: parseFloat( computedStyle.paddingLeft ),
-      bottom: parseFloat( computedStyle.paddingBottom ),
-      right: parseFloat( computedStyle.paddingRight )
+    return function( el ) {
+      var computedStyle = window.getComputedStyle( el );
+
+      return {
+        top:    parseFloat( computedStyle[ topEdge    ] ),
+        left:   parseFloat( computedStyle[ leftEdge   ] ),
+        bottom: parseFloat( computedStyle[ bottomEdge ] ),
+        right:  parseFloat( computedStyle[ rightEdge  ] )
+      };
     };
   }
+
+  var marginFn  = boxModelEdgeFn( 'margin' );
+  var paddingFn = boxModelEdgeFn( 'padding' );
+  var borderFn  = boxModelEdgeFn( 'border' );
 
   function logDimensions( el ) {
     console.log( xFn( el ), yFn( el ), widthFn( el ), heightFn( el ) );
@@ -48,33 +63,61 @@
 
   // Determine element visibility/style?
   elements = elements.filter(function( el ) {
-    return el.offsetWidth && el.offsetHeight;
+    return widthFn( el ) && heightFn( el );
   }).map( logDimensions );
 
   var temp = elements.map(function( el ) {
-    // Grab all dimensions before we beigin conversion.
-    return {
+    var parentEl = el.parentNode;
+
+    // Grab all dimensions before we begin conversion.
+    var properties = {
       el: el,
       x: xFn( el ),
       y: yFn( el ),
       width: widthFn( el ),
       height: heightFn( el ),
-      padding: paddingFn( el )
+      padding: paddingFn( el ),
+      margin: marginFn( el ),
+      border: borderFn( el )
     };
+
+    // Get the parent element dimensions as well.
+    if ( parentEl ) {
+      properties.parent = {
+        padding: paddingFn( parentEl ),
+        margin: marginFn( parentEl ),
+        border: borderFn( parentEl )
+      };
+    }
+
+    return properties;
   });
 
   setTimeout(function() {
     temp.map(function( options ) {
       var el = options.el;
       var padding = options.padding;
+      var parent = options.parent;
 
       var computedStyle = window.getComputedStyle( el );
+      var x, y, width, height;
       if ( computedStyle.position === 'static' ) {
         el.style.position = 'fixed';
-        el.style.left = options.x + 'px';
-        el.style.top = options.y + 'px';
-        el.style.width = ( options.width - padding.left - padding.right ) + 'px';
-        el.style.height = ( options.height - padding.top - padding.bottom ) + 'px';
+
+        x = options.x;
+        y = options.y;
+        width = options.width - ( padding.left + padding.right );
+        height = options.height - ( padding.top + padding.bottom );
+
+        if ( parent ) {
+          x -= parent.padding.left;
+          y -= parent.padding.top;
+        }
+
+        el.style.left = x + 'px';
+        el.style.top = y + 'px';
+        el.style.width = width + 'px';
+        el.style.height = height + 'px';
       }
 
       return el;
