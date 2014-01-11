@@ -42,6 +42,7 @@
 
   var marginFn  = boxModelEdgeFn( 'margin' );
   var paddingFn = boxModelEdgeFn( 'padding' );
+  // Note that borders are represented like '1px solid red'.
   var borderFn  = boxModelEdgeFn( 'border' );
 
   function logDimensions( el ) {
@@ -100,25 +101,24 @@
       var parent = options.parent;
 
       var computedStyle = window.getComputedStyle( el );
-      var x, y, width, height;
-      if ( computedStyle.position === 'static' ) {
-        el.style.position = 'fixed';
-
-        x = options.x;
-        y = options.y;
-        width = options.width - ( padding.left + padding.right );
-        height = options.height - ( padding.top + padding.bottom );
-
-        if ( parent ) {
-          x -= parent.padding.left;
-          y -= parent.padding.top;
-        }
-
-        el.style.left = x + 'px';
-        el.style.top = y + 'px';
-        el.style.width = width + 'px';
-        el.style.height = height + 'px';
+      if ( computedStyle.position !== 'fixed' ) {
+        el.style.position = 'absolute';
       }
+
+      var x = options.x;
+      var y = options.y;
+      var width = options.width - ( padding.left + padding.right );
+      var height = options.height - ( padding.top + padding.bottom );
+
+      if ( parent ) {
+        x -= parent.padding.left;
+        y -= parent.padding.right;
+      }
+
+      el.style.left = x + 'px';
+      el.style.top = y + 'px';
+      el.style.width = width + 'px';
+      el.style.height = height + 'px';
 
       return el;
     });
