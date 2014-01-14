@@ -3,6 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <title>Robot Test</title>
+
+  <style>
+    .body {
+      -webkit-transform: translate3d(50%, 0, 0);
+    }
+  </style>
 </head>
 <body>
   <div class="body">
@@ -10,9 +16,15 @@
       <div class="head" id="head"></div>
       <div class="arm arm-left" id="arm-left"></div>
       <div class="arm arm-right" id="arm-right"></div>
-      <div class="leg leg-left" id="leg-left"></div>
-      <div class="leg left-right" id="leg-right"></div>
+      <div class="leg leg-left" id="leg-left">
+        <div class="foot foot-left" id="foot-left"></div>
+      </div>
+      <div class="leg left-right" id="leg-right">
+        <div class="foot foot-right" id="foot-right"></div>
+      </div>
     </div>
   </div>
+
+  <script src="./js/robot.js"></script>
 </body>
 </html>

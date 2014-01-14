@@ -24,6 +24,31 @@
     el.appendChild( createBox() );
   }
 
+  function addTestShading() {
+    var styleSheet = document.styleSheets[0];
+
+    // Lightness order (descending).
+    [
+      'top', 'front', 'right',
+      'back', 'left', 'bottom'
+    ].forEach(function( direction, index, array ) {
+      var lightness = 1 - ( index / array.length );
+      lightness *= 100;
+
+      var backgroundColor = 'hsla(0, 0%, ' + lightness + '%, 0.5)';
+
+      var rule = '{' +
+        'background-color: ' + backgroundColor +
+      '}';
+
+      styleSheet.insertRule( '.' + direction + ' ' + rule, 0 );
+    });
+  }
+
+  setTimeout(function() {
+    addTestShading();
+  }, 100 );
+
   function setDimensions( el, width, height, depth ) {
     var id = el.id;
 
@@ -31,7 +56,7 @@
         halfHeight = 0.5 * height,
         halfDepth  = 0.5 * depth;
 
-    var faceEls = el.querySelectorAll( id + ' > .face' );
+    var faceEls = el.querySelectorAll( '#' + id + ' > .face' );
     faceEls = [].slice.call( faceEls );
 
     var top, bottom, back, front, left, right;
@@ -84,27 +109,40 @@
   }
 
   function setTranslate3D( el, x, y, z ) {
+    if ( !el || ( !x && !y && !z ) ) {
+      return;
+    }
+
     var transform = 'translate3d(' +
-      x + 'px, ' +
-      y + 'px, ' +
-      z + 'px';
+      ( x || 0 ) + 'px, ' +
+      ( y || 0 ) + 'px, ' +
+      ( z || 0 ) + 'px';
 
     el.style.webkitTransform = transform;
     el.style.transform = transform;
   }
 
   function setTransformOrigin( el, x, y, z ) {
-    var transformOrigin = x + 'px, ' +
-      y + 'px, ' +
-      z + 'px';
+    if ( !el || ( !x && !y && !z ) ) {
+      return;
+    }
+
+    var transformOrigin = ( x || 0 ) + 'px, ' +
+      ( y || 0 ) + 'px, ' +
+      ( z || 0 ) + 'px';
 
     el.style.webkitTransformOrigin = transformOrigin;
     el.style.transformOrigin = transformOrigin;
   }
 
-  var chestEl = document.querySelector( '#chest' );
-  appendBox( chestEl );
-  setDimensions( chestEl, 200, 200, 200 );
+  function setTransformStyle( el ) {
+    if ( !el ) {
+      return;
+    }
+
+    el.style.webkitTransformStyle = 'preserve-3d';
+    el.style.transformStyle = 'preserve-3d';
+  }
 
   var config = (function() {
     var head = {
@@ -129,6 +167,12 @@
       width: 20,
       height: 40,
       depth: 20
+    };
+
+    var foot = {
+      width: 30,
+      height: 10,
+      depth: 40
     };
 
     var headOffsetY = 0.5 * ( head.height + chest.height );
@@ -162,10 +206,33 @@
       },
 
       'leg-left': [ legOffsetX ],
-      'leg-right': [ -legOffsetX ]
+      'leg-right': [ -legOffsetX ],
+
+      foot: {
+        dimensions: [ foot.width, foot.height, foot.depth ]
+      }
     };
   }) ();
 
-  var armLeftEl = document.querySelector( '#arm-left' );
-  appendBox( armLeftEl );
+  var boxEls = [
+    'chest', 'head', 'arm', 'leg', 'foot'
+  ].map(function( className ) {
+    var els = [].slice.call( document.querySelectorAll( '.' + className ) );
+    var classConfig = config[ className ];
+
+    els.forEach(function( el ) {
+      appendBox( el );
+      setDimensions.apply( null, [ el ].concat( classConfig.dimensions ) );
+      setTranslate3D.apply( null, [ el ].concat( classConfig.translate3d ) );
+      setTransformOrigin.apply( null, [ el ].concat( classConfig.transformOrigin ) );
+      setTransformStyle( el );
+    });
+
+    return els;
+  });
+
+  // Flatten boxEls.
+  boxEls = boxEls.reduce(function( array, els ) {
+    return array.concat( els );
+  }, [] );
 }) ( window, document );
