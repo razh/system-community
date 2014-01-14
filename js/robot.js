@@ -35,7 +35,7 @@
       var lightness = 1 - ( index / array.length );
       lightness *= 100;
 
-      var backgroundColor = 'hsla(0, 0%, ' + lightness + '%, 0.5)';
+      var backgroundColor = 'hsla(0, 0%, ' + lightness + '%, 0.5);';
 
       var rule = '{' +
         'background-color: ' + backgroundColor +
@@ -47,6 +47,11 @@
 
   setTimeout(function() {
     addTestShading();
+
+    (function() {
+      var styleSheet = document.styleSheets[0] ;
+      styleSheet.insertRule( '.face {position: absolute;}', 0 );
+    }) ();
   }, 100 );
 
   function setDimensions( el, width, height, depth ) {
@@ -152,34 +157,37 @@
     };
 
     var chest = {
-      width: 200,
-      height: 200,
-      depth: 200
+      width: 100,
+      height: 100,
+      depth: 50
     };
 
     var arm = {
-      width: 20,
-      height: 100,
-      depth: 20
+      width: 30,
+      height: 80,
+      depth: 30
     };
 
     var leg = {
-      width: 20,
-      height: 40,
-      depth: 20
+      width: 30,
+      height: 60,
+      depth: 30
     };
 
     var foot = {
-      width: 30,
-      height: 10,
-      depth: 40
+      width: 40,
+      height: 20,
+      depth: 50
     };
 
-    var headOffsetY = 0.5 * ( head.height + chest.height );
-    var armOffsetX = 0.5 * ( chest.width + arm.width );
+    var spacing = 1;
+
+    var headOffsetY = 0.5 * ( head.height + chest.height ) + spacing;
+    var armOffsetX = 0.5 * ( chest.width + arm.width ) + spacing;
 
     var legOffsetX = 0.25 * chest.width;
-    var legOffsetY = 0.5 * ( leg.height + chest.height );
+    var legOffsetY = 0.5 * ( leg.height + chest.height ) + spacing;
+    var footOffsetY = 0.5 * ( foot.height + leg.height ) + spacing;
 
     return {
       head: {
@@ -201,15 +209,16 @@
 
       leg: {
         dimensions: [ leg.width, leg.height, leg.depth ],
-        translate3d: [ 0, legOffsetY, 0 ],
         transformOrigin: [ 0, -0.5 * leg.height ]
       },
 
-      'leg-left': [ legOffsetX ],
-      'leg-right': [ -legOffsetX ],
+      'leg-left': [ legOffsetX, legOffsetY ],
+      'leg-right': [ -legOffsetX, legOffsetY ],
 
       foot: {
-        dimensions: [ foot.width, foot.height, foot.depth ]
+        dimensions: [ foot.width, foot.height, foot.depth ],
+        translate3d: [ 0, footOffsetY, 0.2 * foot.depth ],
+        transformOrigin: [ 0, -0.5 * foot.height ]
       }
     };
   }) ();
@@ -235,4 +244,17 @@
   boxEls = boxEls.reduce(function( array, els ) {
     return array.concat( els );
   }, [] );
+
+  // Add directional offsets.
+  [
+    'arm-left', 'arm-right',
+    'leg-left', 'leg-right'
+  ].forEach(function( className ) {
+    var els = [].slice.call( document.querySelectorAll( '.' + className ) );
+    var classConfig = config[ className ];
+    els.forEach(function( el ) {
+      setTranslate3D.apply( null, [ el ].concat( classConfig ) );
+    });
+  });
+
 }) ( window, document );

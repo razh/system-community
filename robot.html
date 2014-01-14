@@ -5,13 +5,37 @@
   <title>Robot Test</title>
 
   <style>
-    .body {
-      -webkit-transform: translate3d(50%, 0, 0);
+    html, body {
+      height: 100%;
+    }
+
+    @-keyframes rotation {
+      0%   { transform: rotateX(0deg) rotateY(0deg); }
+      50%  { transform: rotateX(10deg) rotateY(180deg); }
+      100% { transform: rotateX(0deg) rotateY(360deg); }
+    }
+
+    @-webkit-keyframes rotation {
+      0%   { -webkit-transform: rotateX(0deg) rotateY(0deg); }
+      50%  { -webkit-transform: rotateX(10deg) rotateY(180deg); }
+      100% { -webkit-transform: rotateX(0deg) rotateY(360deg); }
+    }
+
+    .robot {
+      position: absolute;
+      top: 30%;
+      left: 50%;
+
+      -webkit-animation: rotation 2s linear;
+      animation: rotation 2s linear;
+
+      -webkit-transform-style: preserve-3d;
+      transform-style: preserve-3d;
     }
   </style>
 </head>
 <body>
-  <div class="body">
+  <div class="robot">
     <div class="chest" id="chest">
       <div class="head" id="head"></div>
       <div class="arm arm-left" id="arm-left"></div>
@@ -19,7 +43,7 @@
       <div class="leg leg-left" id="leg-left">
         <div class="foot foot-left" id="foot-left"></div>
       </div>
-      <div class="leg left-right" id="leg-right">
+      <div class="leg leg-right" id="leg-right">
         <div class="foot foot-right" id="foot-right"></div>
       </div>
     </div>
