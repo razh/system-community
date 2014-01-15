@@ -1,6 +1,9 @@
 (function( window, document, undefined ) {
   'use strict';
 
+  // Keep this a power of 2.
+  var size = 256;
+
   function renderTexture( ctx ) {
     var width  = ctx.canvas.width,
         height = ctx.canvas.height;
@@ -23,17 +26,42 @@
     ctx.putImageData( imageData, 0, 0 );
   }
 
-  (function init() {
-    var canvas = document.querySelector( 'canvas' ),
-        ctx    = canvas.getContext( '2d' );
+  function renderFaceTexture( ctx ) {
+    // Eyes.
+    function drawEye( ctx, x, y, radius ) {
+      ctx.beginPath();
+      ctx.arc( x, y, radius, 0, 2 * Math.PI );
 
-    // Keep this a power of 2.
-    var size = 512;
+      ctx.shadowColor = '#0f0';
+      ctx.shadowBlur = 20;
 
+      ctx.fillStyle = '#0f0';
+      ctx.fill();
+
+      ctx.shadowBlur = 0;
+    }
+
+    drawEye( ctx, 0.3 * size, 0.3 * size, 0.1 * size );
+    drawEye( ctx, 0.7 * size, 0.3 * size, 0.1 * size );
+  }
+
+  function setCanvasDimensions( canvas ) {
     canvas.width = size;
     canvas.height = size;
+  }
 
+  (function init() {
+    var canvas = document.querySelector( '#default' ),
+        ctx    = canvas.getContext( '2d' );
+
+    setCanvasDimensions( canvas );
     renderTexture( ctx );
 
+    var faceCanvas = document.querySelector( '#face' ),
+        faceCtx    = faceCanvas.getContext( '2d' );
+
+    setCanvasDimensions( faceCanvas );
+    renderTexture( faceCtx );
+    renderFaceTexture( faceCtx );
   }) ();
 }) ( window, document );
