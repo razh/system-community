@@ -158,19 +158,19 @@
 
     var chest = {
       width: 100,
-      height: 100,
-      depth: 50
+      height: 120,
+      depth: 60
     };
 
     var arm = {
-      width: 30,
-      height: 80,
-      depth: 30
+      width: 25,
+      height: 100,
+      depth: 25
     };
 
     var leg = {
       width: 30,
-      height: 60,
+      height: 100,
       depth: 30
     };
 
