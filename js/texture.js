@@ -49,6 +49,42 @@
     ctx.putImageData( imageData, 0, 0 );
   }
 
+  function roundRectCentered( ctx, x, y, width, height, radius ) {
+    var halfWidth  = 0.5 * width,
+        halfHeight = 0.5 * height;
+
+    var x0 = x - halfWidth,
+        y0 = y - halfHeight,
+        x1 = x + halfWidth,
+        y1 = y + halfHeight;
+
+    ctx.beginPath();
+
+    ctx.moveTo( x0 + radius, y0 );
+    ctx.lineTo( x1 - radius, y0 );
+    ctx.quadraticCurveTo(
+      x1, y0,
+      x1, y0 + radius
+    );
+    ctx.lineTo( x1, y1 - radius );
+    ctx.quadraticCurveTo(
+      x1, y1,
+      x1 - radius, y1
+    );
+    ctx.lineTo( x0 + radius, y1 );
+    ctx.quadraticCurveTo(
+      x0, y1,
+      x0, y1 - radius
+    );
+    ctx.lineTo( x0, y0 + radius );
+    ctx.quadraticCurveTo(
+      x0, y0,
+      x0 + radius, y0
+    );
+
+    ctx.closePath();
+  }
+
   function renderFaceTexture( ctx ) {
     // Eyes.
     function drawEye( ctx, x, y, radius ) {
@@ -73,8 +109,15 @@
       ctx.shadowBlur = 0;
     }
 
+    function drawMouth( ctx, x, y, width, height, radius ) {
+      roundRectCentered( ctx, x, y, width, height, radius );
+      ctx.fillStyle = '#222';
+      ctx.fill();
+    }
+
     drawEye( ctx, 0.3 * size, 0.3 * size, 0.1 * size );
     drawEye( ctx, 0.7 * size, 0.3 * size, 0.1 * size );
+    drawMouth( ctx, 0.5 * size, 0.7 * size, 0.6 * size, 0.3 * size, 0.1 * size );
   }
 
   function setCanvasDimensions( canvas ) {
