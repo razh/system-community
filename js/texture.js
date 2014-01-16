@@ -1,6 +1,8 @@
 (function( window, document, undefined ) {
   'use strict';
 
+  var PI2 = 2 * Math.PI;
+
   // Keep this a power of 2.
   var size = 256;
 
@@ -29,24 +31,74 @@
       data[ i++ ] = 255;
     }
 
-    var noise = new Uint8ClampedArray( data );
-    var x1, y1;
-    i = 0;
-    while ( i < length ) {
-      index = 0.25 * i;
-      x = index % width;
-      y = Math.floor( index / height );
+    // Additional noise.
+    (function( moreNoise ) {
+      if ( moreNoise ) {
+        return;
+      }
 
-      // First octave coordinates.
-      x1 = Math.floor( 0.25 * x );
-      y1 = Math.floor( 0.25 * y );
-      data[ i++ ] = data[ i++ ] = data[ i++ ] = 0 +
-        0.5 * noise[ i - 1 ] + 0.2 * x +
-        0.25 * noise[ 4 * ( y1 * width + x1 ) ];
-      data[ i++ ] = 255;
-    }
+      var noise = new Uint8ClampedArray( data );
+      var x1, y1;
+      i = 0;
+      while ( i < length ) {
+        index = 0.25 * i;
+        x = index % width;
+        y = Math.floor( index / height );
+
+        // First octave coordinates.
+        x1 = Math.floor( 0.25 * x );
+        y1 = Math.floor( 0.25 * y );
+        data[ i++ ] = data[ i++ ] = data[ i++ ] = 0 +
+          0.5 * noise[ i - 1 ] + 0.1 * x +
+          0.1 * noise[ 4 * ( y1 * width + x1 ) ];
+        data[ i++ ] = 255;
+      }
+    }) ( false );
 
     ctx.putImageData( imageData, 0, 0 );
+  }
+
+  function drawRivet( ctx, x, y, radius ) {
+    ctx.beginPath();
+    ctx.arc( x, y, radius, 0, PI2 );
+
+    ctx.shadowColor = '#222';
+    ctx.shadowBlur = 5;
+
+    ctx.fillStyle = '#aaa';
+    ctx.fill();
+
+    ctx.shadowBlur = 0;
+  }
+
+  function drawRivets( ctx, x, y, width, height, xCount, yCount, rivetRadius ) {
+    var halfWidth  = 0.5 * width,
+        halfHeight = 0.5 * height;
+
+    var x0 = x - halfWidth,
+        y0 = y - halfHeight,
+        x1 = x + halfWidth,
+        y1 = y + halfHeight;
+
+    var xSpacing = width / ( xCount - 1 ),
+        ySpacing = height / ( yCount - 1 );
+
+    var xi, yi;
+
+    // Draw horizontal top and bottom rows.
+    var i;
+    for ( i = 0; i < xCount; i++ ) {
+      xi = x0 + xSpacing * i;
+      drawRivet( ctx, xi, y0, rivetRadius );
+      drawRivet( ctx, xi, y1, rivetRadius );
+    }
+
+    // Draw vertical left and right columns (except first and last points).
+    for ( i = 1; i < yCount - 1; i++ ) {
+      yi = y0 + ySpacing * i;
+      drawRivet( ctx, x0, yi, rivetRadius );
+      drawRivet( ctx, x1, yi, rivetRadius );
+    }
   }
 
   function roundRectCentered( ctx, x, y, width, height, radius ) {
@@ -89,7 +141,7 @@
     // Eyes.
     function drawEye( ctx, x, y, radius ) {
       ctx.beginPath();
-      ctx.arc( x, y, radius, 0, 2 * Math.PI );
+      ctx.arc( x, y, radius, 0, PI2 );
 
       ctx.shadowColor = '#0f0';
       ctx.shadowBlur = 20;
@@ -99,7 +151,7 @@
 
       // Inner eye.
       ctx.beginPath();
-      ctx.arc( x, y, 0.8 * radius, 0, 2 * Math.PI );
+      ctx.arc( x, y, 0.8 * radius, 0, PI2 );
 
       ctx.shadowColor = '#fff';
 
@@ -131,6 +183,7 @@
 
     setCanvasDimensions( canvas );
     renderTexture( ctx );
+    drawRivets( ctx, 0.5 * size, 0.5 * size, 0.95 * size, 0.95 * size, 8, 8, 2 );
 
     var faceCanvas = document.querySelector( '#face' ),
         faceCtx    = faceCanvas.getContext( '2d' );
