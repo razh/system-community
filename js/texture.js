@@ -25,7 +25,7 @@
       y = Math.floor( index / height );
 
       // Set RGB.
-      value = 96 + Math.round( Math.random() * 16 );
+      value = 144 + Math.round( Math.random() * 32 );
       data[ i++ ] = data[ i++ ] = data[ i++ ] = value;
       // Set alpha.
       data[ i++ ] = 255;
@@ -63,9 +63,9 @@
     ctx.arc( x, y, radius, 0, PI2 );
 
     ctx.shadowColor = '#222';
-    ctx.shadowBlur = 5;
+    ctx.shadowBlur = 5 * radius;
 
-    ctx.fillStyle = '#aaa';
+    ctx.fillStyle = '#ccc';
     ctx.fill();
 
     ctx.shadowBlur = 0;
@@ -144,7 +144,7 @@
       ctx.arc( x, y, radius, 0, PI2 );
 
       ctx.shadowColor = '#0f0';
-      ctx.shadowBlur = 20;
+      ctx.shadowBlur = radius;
 
       ctx.fillStyle = '#0f0';
       ctx.fill();
@@ -155,21 +155,54 @@
 
       ctx.shadowColor = '#fff';
 
-      ctx.fillStyle = 'fff';
+      ctx.fillStyle = '#fff';
       ctx.fill();
 
       ctx.shadowBlur = 0;
     }
 
-    function drawMouth( ctx, x, y, width, height, radius ) {
-      roundRectCentered( ctx, x, y, width, height, radius );
-      ctx.fillStyle = '#222';
-      ctx.fill();
+    function drawVerticalGrating( ctx, x, y, width, height, count ) {
+      var halfWidth = 0.5 * width,
+          halfHeight = 0.5 * height;
+
+      var x0 = x - halfWidth,
+          y0 = y - halfHeight,
+          y1 = y + halfHeight;
+
+      var spacing = width / ( count - 1 );
+
+      ctx.beginPath();
+      for ( var i = 0; i < count; i++ ) {
+        ctx.moveTo( x0 + spacing * i, y0 );
+        ctx.lineTo( x0 + spacing * i, y1 );
+      }
     }
 
-    drawEye( ctx, 0.3 * size, 0.3 * size, 0.1 * size );
-    drawEye( ctx, 0.7 * size, 0.3 * size, 0.1 * size );
-    drawMouth( ctx, 0.5 * size, 0.7 * size, 0.6 * size, 0.3 * size, 0.1 * size );
+    function drawMouth( ctx, x, y, width, height, radius ) {
+      roundRectCentered( ctx, x, y, width, height, radius );
+      ctx.fillStyle = '#666';
+      ctx.fill();
+
+      ctx.shadowColor = '#111';
+      ctx.shadowBlur = 0.05 * width;
+
+      ctx.lineWidth = 0.04 * width;
+      ctx.strokeStyle = '#666';
+      ctx.stroke();
+
+      ctx.shadowBlur = 0;
+
+      drawVerticalGrating( ctx, x, y, 0.75 * width, 0.7 * height, 7 );
+      ctx.lineCap = 'round';
+      ctx.lineWidth = 0.08 * width;
+      ctx.strokeStyle = '#111';
+      ctx.stroke();
+      ctx.lineCap = 'butt';
+    }
+
+    drawEye( ctx, 0.28 * size, 0.32 * size, 0.11 * size );
+    drawEye( ctx, 0.72 * size, 0.32 * size, 0.11 * size );
+    drawMouth( ctx, 0.5 * size, 0.7 * size, 0.42 * size, 0.3 * size, 0.06 * size );
   }
 
   function setCanvasDimensions( canvas ) {
@@ -181,15 +214,20 @@
     var canvas = document.querySelector( '#default' ),
         ctx    = canvas.getContext( '2d' );
 
+    function drawDefaultRivets( ctx ) {
+      drawRivets( ctx, 0.5 * size, 0.5 * size, 0.96 * size, 0.96 * size, 10, 10, 0.005 * size );
+    }
+
     setCanvasDimensions( canvas );
     renderTexture( ctx );
-    drawRivets( ctx, 0.5 * size, 0.5 * size, 0.95 * size, 0.95 * size, 8, 8, 2 );
+    drawDefaultRivets( ctx );
 
     var faceCanvas = document.querySelector( '#face' ),
         faceCtx    = faceCanvas.getContext( '2d' );
 
     setCanvasDimensions( faceCanvas );
     renderTexture( faceCtx );
+    drawDefaultRivets( faceCtx );
     renderFaceTexture( faceCtx );
   }) ();
 }) ( window, document );
