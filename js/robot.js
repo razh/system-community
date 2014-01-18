@@ -45,12 +45,52 @@
     });
   }
 
+  function addDebugTexture() {
+    var size = 256;
+
+    var width = size,
+        height = size;
+
+    var ctx = document.getCSSCanvasContext( '2d', 'texture', width, height );
+
+    var cellWidth = 16,
+        cellHeight = 16;
+
+    var xCount = Math.ceil( width / cellWidth ),
+        yCount = Math.ceil( height / cellHeight );
+
+    var i, j;
+    var x, y;
+    for ( i = 0; i < yCount; i++ ) {
+      y = i * cellHeight;
+      for( j = 0; j < xCount; j++ ) {
+        x = j * cellWidth;
+
+        ctx.beginPath();
+        ctx.rect( x, y, cellWidth, cellHeight );
+
+        // Colors alternate between black and purple.
+        ctx.fillStyle = ( i + j ) % 2 ? '#f0f' : '#000';
+        ctx.fill();
+
+        if ( !i || !j || i === yCount - 1 || j === xCount - 1 ) {
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+        }
+        ctx.fill();
+      }
+    }
+  }
+
   setTimeout(function() {
     addTestShading();
 
     (function() {
-      var styleSheet = document.styleSheets[0] ;
-      styleSheet.insertRule( '.face {position: absolute;}', 0 );
+      var styleSheet = document.styleSheets[0];
+      // Append rules at end.
+      styleSheet.insertRule( '.face {position: absolute;}', styleSheet.cssRules.length );
+      styleSheet.insertRule( '.face {background: -webkit-canvas(texture);}', styleSheet.cssRules.length );
+      styleSheet.insertRule( '.face {background-size: 100% 100%;}', styleSheet.cssRules.length );
+      addDebugTexture();
     }) ();
   }, 100 );
 

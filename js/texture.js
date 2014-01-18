@@ -202,7 +202,7 @@
 
     drawEye( ctx, 0.28 * size, 0.32 * size, 0.11 * size );
     drawEye( ctx, 0.72 * size, 0.32 * size, 0.11 * size );
-    drawMouth( ctx, 0.5 * size, 0.7 * size, 0.42 * size, 0.3 * size, 0.06 * size );
+    drawMouth( ctx, 0.5 * size, 0.7 * size, 0.4 * size, 0.3 * size, 0.06 * size );
   }
 
   function setCanvasDimensions( canvas ) {
