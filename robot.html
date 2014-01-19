@@ -7,6 +7,11 @@
   <style>
     html, body {
       height: 100%;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+
+    .scene {
+      height: 100%;
 
       -webkit-perspective: 1000px;
       perspective: 1000px;
@@ -35,21 +40,37 @@
       -webkit-transform-style: preserve-3d;
       transform-style: preserve-3d;
     }
+
+    .help {
+      position: absolute;
+      left: 1em;
+      bottom: 1em;
+    }
+
+    .help > p {
+      margin: 0;
+    }
   </style>
 </head>
 <body>
-  <div class="robot">
-    <div class="chest" id="chest">
-      <div class="head" id="head"></div>
-      <div class="arm arm-left" id="arm-left"></div>
-      <div class="arm arm-right" id="arm-right"></div>
-      <div class="leg leg-left" id="leg-left">
-        <div class="foot foot-left" id="foot-left"></div>
-      </div>
-      <div class="leg leg-right" id="leg-right">
-        <div class="foot foot-right" id="foot-right"></div>
+  <div class="scene">
+    <div class="robot">
+      <div class="chest" id="chest">
+        <div class="head" id="head"></div>
+        <div class="arm arm-left" id="arm-left"></div>
+        <div class="arm arm-right" id="arm-right"></div>
+        <div class="leg leg-left" id="leg-left">
+          <div class="foot foot-left" id="foot-left"></div>
+        </div>
+        <div class="leg leg-right" id="leg-right">
+          <div class="foot foot-right" id="foot-right"></div>
+        </div>
       </div>
     </div>
+  </div>
+  <div class="help">
+    <p>SHIFT to orbit.</p>
+    <p>R to reset rotation.</p>
   </div>
 
   <script src="./js/robot.js"></script>

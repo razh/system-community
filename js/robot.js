@@ -1,6 +1,8 @@
 (function( window, document, undefined ) {
   'use strict';
 
+  var robotEl = document.querySelector( '.robot' );
+
   var directions = [
     'top', 'bottom',
     'back', 'front',
@@ -303,6 +305,34 @@
     els.forEach(function( el ) {
       setTranslate3D.apply( null, [ el ].concat( classConfig ) );
     });
+  });
+
+  // Add basic user interaction.
+  function rotate( rx, ry ) {
+    var transform = 'rotateX(' + rx + 'deg) rotateY(' + ry + 'deg)';
+
+    robotEl.style.webkitTransform = transform;
+    robotEl.style.transform = transform;
+  }
+
+  function onMouseMove( event ) {
+    if ( !event.shiftKey ) {
+      return;
+    }
+
+    var rx = -( event.clientY / window.innerHeight - 0.5 ) * 360,
+        ry =  ( event.clientX / window.innerWidth  - 0.5 ) * 360;
+
+    rotate( rx, ry );
+  }
+
+  window.addEventListener( 'mousemove', onMouseMove );
+
+  document.addEventListener( 'keydown', function( event ) {
+    // R.
+    if ( event.which === 82 ) {
+      rotate( 0, 0 );
+    }
   });
 
 }) ( window, document );
