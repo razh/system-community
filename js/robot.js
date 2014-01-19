@@ -75,8 +75,8 @@
 
         if ( !i || !j || i === yCount - 1 || j === xCount - 1 ) {
           ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+          ctx.fill();
         }
-        ctx.fill();
       }
     }
   }
@@ -220,7 +220,15 @@
       depth: 50
     };
 
-    var spacing = 1;
+    // Scaling.
+    var scale = 1.5;
+    [ head, chest, arm, leg, foot ].forEach(function( box ) {
+      box.width  *= scale;
+      box.height *= scale;
+      box.depth  *= scale;
+    });
+
+    var spacing = 0;
 
     var headOffsetY = 0.5 * ( head.height + chest.height ) + spacing;
     var armOffsetX = 0.5 * ( chest.width + arm.width ) + spacing;
