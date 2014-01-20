@@ -89,7 +89,6 @@
     (function() {
       var styleSheet = document.styleSheets[0];
       // Append rules at end.
-      styleSheet.insertRule( '.face {position: absolute;}', styleSheet.cssRules.length );
       styleSheet.insertRule( '.face {background: -webkit-canvas(texture);}', styleSheet.cssRules.length );
       styleSheet.insertRule( '.face {background-size: 100% 100%;}', styleSheet.cssRules.length );
       addDebugTexture();
@@ -174,8 +173,8 @@
       return;
     }
 
-    var transformOrigin = ( x || 0 ) + 'px, ' +
-      ( y || 0 ) + 'px, ' +
+    var transformOrigin = ( x || 0 ) + 'px ' +
+      ( y || 0 ) + 'px ' +
       ( z || 0 ) + 'px';
 
     el.style.webkitTransformOrigin = transformOrigin;
@@ -206,7 +205,7 @@
 
     var arm = {
       width: 25,
-      height: 100,
+      height: 130,
       depth: 25
     };
 
@@ -231,9 +230,11 @@
     });
 
     var spacing = 0;
+    var shoulderHeight = 0.1 * chest.height;
 
     var headOffsetY = 0.5 * ( head.height + chest.height ) + spacing;
     var armOffsetX = 0.5 * ( chest.width + arm.width ) + spacing;
+    var armOffsetY = 0.5 * ( arm.height - chest.height ) + shoulderHeight;
 
     var legOffsetX = 0.25 * chest.width;
     var legOffsetY = 0.5 * ( leg.height + chest.height ) + spacing;
@@ -254,8 +255,8 @@
         transformOrigin: [ 0, -0.5 * arm.height ]
       },
 
-      'arm-left': [ armOffsetX ],
-      'arm-right': [ -armOffsetX ],
+      'arm-left': [ armOffsetX, armOffsetY ],
+      'arm-right': [ -armOffsetX, armOffsetY ],
 
       leg: {
         dimensions: [ leg.width, leg.height, leg.depth ],
@@ -267,7 +268,7 @@
 
       foot: {
         dimensions: [ foot.width, foot.height, foot.depth ],
-        translate3d: [ 0, footOffsetY, 0.5 * ( leg.depth - foot.depth ) ],
+        translate3d: [ 0, footOffsetY, -0.5 * ( leg.depth - foot.depth ) ],
         transformOrigin: [ 0, -0.5 * foot.height ]
       }
     };
