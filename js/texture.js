@@ -33,7 +33,7 @@
 
     // Additional noise.
     (function( moreNoise ) {
-      if ( moreNoise ) {
+      if ( !moreNoise ) {
         return;
       }
 
@@ -49,11 +49,11 @@
         x1 = Math.floor( 0.25 * x );
         y1 = Math.floor( 0.25 * y );
         data[ i++ ] = data[ i++ ] = data[ i++ ] = 0 +
-          0.5 * noise[ i - 1 ] + 0.1 * x +
+          0.5 * noise[ i - 1 ] + 0.1 * y +
           0.1 * noise[ 4 * ( y1 * width + x1 ) ];
         data[ i++ ] = 255;
       }
-    }) ( false );
+    }) ( true );
 
     ctx.putImageData( imageData, 0, 0 );
   }

@@ -163,7 +163,7 @@
     var transform = 'translate3d(' +
       ( x || 0 ) + 'px, ' +
       ( y || 0 ) + 'px, ' +
-      ( z || 0 ) + 'px';
+      ( z || 0 ) + 'px)';
 
     el.style.webkitTransform = transform;
     el.style.transform = transform;
@@ -217,9 +217,9 @@
     };
 
     var foot = {
-      width: 40,
+      width: 30,
       height: 20,
-      depth: 50
+      depth: 60
     };
 
     // Scaling.
@@ -267,7 +267,7 @@
 
       foot: {
         dimensions: [ foot.width, foot.height, foot.depth ],
-        translate3d: [ 0, footOffsetY, 0.2 * foot.depth ],
+        translate3d: [ 0, footOffsetY, 0.5 * ( leg.depth - foot.depth ) ],
         transformOrigin: [ 0, -0.5 * foot.height ]
       }
     };
