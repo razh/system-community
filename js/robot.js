@@ -1,8 +1,6 @@
 (function( window, document, undefined ) {
   'use strict';
 
-  var robotEl = document.querySelector( '.robot' );
-
   var directions = [
     'top', 'bottom',
     'back', 'front',
@@ -75,6 +73,7 @@
         ctx.fillStyle = ( i + j ) % 2 ? '#f0f' : '#000';
         ctx.fill();
 
+        // Add texture border.
         if ( !i || !j || i === yCount - 1 || j === xCount - 1 ) {
           ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
           ctx.fill();
@@ -125,19 +124,19 @@
       }
 
       if ( back || front ) {
-        faceEl.style.width =  width  + 'px';
+        faceEl.style.width  = width  + 'px';
         faceEl.style.height = height + 'px';
 
         faceEl.style.marginLeft = -halfWidth  + 'px';
-        faceEl.style.marginTop =  -halfHeight + 'px';
+        faceEl.style.marginTop  = -halfHeight + 'px';
       }
 
       if ( left || right ) {
-        faceEl.style.width =  depth  + 'px';
+        faceEl.style.width  = depth  + 'px';
         faceEl.style.height = height + 'px';
 
         faceEl.style.marginLeft = -halfDepth  + 'px';
-        faceEl.style.marginTop =  -halfHeight + 'px';
+        faceEl.style.marginTop  = -halfHeight + 'px';
       }
 
       if ( top    ) { transform = 'translate3d(0, ' + -halfHeight + 'px, 0) rotateX( 90deg)'; }
