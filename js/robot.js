@@ -19,17 +19,14 @@
         'background-color: ' + backgroundColor +
       '}';
 
-      styleSheet.insertRule( '.' + direction + ' ' + rule, 0 );
+      // Append rules.
+      styleSheet.insertRule( '.' + direction + ' ' + rule, styleSheet.cssRules.length );
     });
   }
 
-  function addDebugTexture() {
-    var size = 256;
-
-    var width = size,
-        height = size;
-
-    var ctx = document.getCSSCanvasContext( '2d', 'texture', width, height );
+  function drawDebugTexture( ctx ) {
+    var width = ctx.canvas.width,
+        height = ctx.canvas.height;
 
     var cellWidth = 16,
         cellHeight = 16;
@@ -60,17 +57,71 @@
     }
   }
 
+
+  /**
+   * Appends a canvas element to the DOM.
+   * Returns that element.
+   */
+  function addMozDebugCanvas( size ) {
+    var width = size,
+        height = size;
+
+    var canvas = document.createElement( 'canvas' );
+
+    canvas.id = 'texture';
+    canvas.classList.add( 'moz-canvas' );
+
+    canvas.width = width;
+    canvas.height = height;
+    canvas.style.display = 'none';
+
+    document.body.appendChild( canvas );
+
+    return canvas;
+  }
+
+  function addWebkitDebugTexture( size ) {
+    var width = size,
+        height = size;
+
+    var ctx = document.getCSSCanvasContext( '2d', 'texture', width, height );
+
+    drawDebugTexture( ctx );
+  }
+
   setTimeout(function() {
     addTestShading();
 
     (function() {
+      // Texture size.
+      var size = 256;
+      var mozCanvas = addMozDebugCanvas( size );
+
       var styleSheet = document.styleSheets[0];
+
       // Append rules at end.
-      styleSheet.insertRule( '.face {background: -webkit-canvas(texture);}', styleSheet.cssRules.length );
+      styleSheet.insertRule( '.face {background-image: -webkit-canvas(texture);}', styleSheet.cssRules.length );
+      styleSheet.insertRule( '.face {background-image: -moz-element(#texture);}', styleSheet.cssRules.length );
       styleSheet.insertRule( '.face {background-size: 100% 100%;}', styleSheet.cssRules.length );
-      addDebugTexture();
+
+      // Check for webkit (since getCSSCanvasContext() may not exist).
+      var faceEl = document.createElement( 'div' );
+      faceEl.style.visibility = 'hidden';
+      faceEl.classList.add( 'face' );
+      document.body.appendChild(faceEl);
+
+      var backgroundImage = window.getComputedStyle( faceEl ).backgroundImage;
+      if ( backgroundImage.indexOf( 'webkit' ) !== -1 ) {
+        addWebkitDebugTexture( size );
+        // Remove unnecessary Mozilla canvas element.
+        document.body.removeChild( mozCanvas );
+      } else if ( backgroundImage.indexOf( 'moz' ) !== -1 ) {
+        drawDebugTexture( mozCanvas.getContext( '2d' ) );
+      }
+
+      document.body.removeChild( faceEl );
     }) ();
-  }, 100 );
+  }, 16 );
 
   var config = (function() {
     var head = {
