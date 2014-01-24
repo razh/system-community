@@ -1,0 +1,59 @@
+html, body {
+  height: 100%;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  overflow: hidden;
+}
+
+.scene {
+  height: 100%;
+
+  -webkit-perspective: 1000px;
+  perspective: 1000px;
+}
+
+@-keyframes rotation {
+  0%   { transform: rotateX(0deg) rotateY(0deg); }
+  50%  { transform: rotateX(10deg) rotateY(180deg); }
+  100% { transform: rotateX(0deg) rotateY(360deg); }
+}
+
+@-moz-keyframes rotation {
+  0%   { transform: rotateX(0deg) rotateY(0deg); }
+  50%  { transform: rotateX(10deg) rotateY(180deg); }
+  100% { transform: rotateX(0deg) rotateY(360deg); }
+}
+
+@-webkit-keyframes rotation {
+  0%   { -webkit-transform: rotateX(0deg) rotateY(0deg); }
+  50%  { -webkit-transform: rotateX(10deg) rotateY(180deg); }
+  100% { -webkit-transform: rotateX(0deg) rotateY(360deg); }
+}
+
+.robot {
+  position: absolute;
+  top: 35%;
+  left: 50%;
+
+  -webkit-animation: rotation 2s linear;
+  animation: rotation 2s linear;
+
+  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+}
+
+.face {
+  position: absolute;
+
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.help {
+  position: absolute;
+  left: 1em;
+  bottom: 1em;
+}
+
+.help > p {
+  margin: 0;
+}
