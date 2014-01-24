@@ -29,7 +29,7 @@ html, body {
   100% { -webkit-transform: rotateX(0deg) rotateY(360deg); }
 }
 
-.robot {
+.rotatable {
   position: absolute;
   top: 35%;
   left: 50%;
