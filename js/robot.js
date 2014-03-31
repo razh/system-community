@@ -74,6 +74,7 @@
     canvas.width = width;
     canvas.height = height;
     canvas.style.display = 'none';
+    canvas.style.position = 'absolute';
 
     document.body.appendChild( canvas );
 
@@ -121,7 +122,7 @@
 
       document.body.removeChild( faceEl );
     }) ();
-  }, 16 );
+  });
 
   var config = (function() {
     var head = {
